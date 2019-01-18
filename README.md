@@ -29,7 +29,7 @@ Tips:
  
  Example: 
   
-![Alt text](example.jpg?raw=true "Example" height=100)
+![Alt text](example.jpg?raw=true "Example" 100x200)
 **********************************************************************
 
 Prerequisites:
