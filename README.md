@@ -29,7 +29,8 @@ Tips:
  
  Example: 
   
-![Alt text](example.jpg?raw=true "Example" | width = 200)
+<img src="example.jpg" width="300">
+
 **********************************************************************
 
 Prerequisites:
