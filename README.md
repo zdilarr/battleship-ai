@@ -26,7 +26,10 @@ Tips:
 - From Main Menu, press close button (X)  to exit.
 - Increase/Decrease FPS (constants.py) and number of matches (main.py)
   as per your preference
-![Alt text](example.jpg?raw=true "Example")
+ 
+ Example: 
+  
+![Alt text](example.jpg?raw=true "Example" height=100)
 **********************************************************************
 
 Prerequisites:
