@@ -1,8 +1,12 @@
+"""
+Unit tests for battleship game methods.
+Author: Emilija Zdilar 05-05-2018
+"""
+from battleship_game import *
 import os
 import sys
 import unittest
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from battleship_game import *
 
 
 class TestBattleshipGame (unittest.TestCase):
@@ -16,8 +20,8 @@ class TestBattleshipGame (unittest.TestCase):
         pass
 
     def setUp(self):
-        self.game_one = BattleshipGame(HARDAI, HUMAN)
-        self.game_two = BattleshipGame(HARDAI, RANDOMAI)
+        self.game_one = BattleshipGame(HARD_AI, HUMAN)
+        self.game_two = BattleshipGame(HARD_AI, RANDOM_AI)
         self.game_one.prepare_boards()
         self.game_two.prepare_boards()
 
@@ -33,7 +37,7 @@ class TestBattleshipGame (unittest.TestCase):
 
     def test_strategy(self):
         sum1, sum2 = 0, 0
-        all_moves = [(x, y) for x in list(range(0, BOARDHEIGHT)) for y in list(range(0, BOARDWIDTH))]
+        all_moves = [(x, y) for x in list(range(0, BOARD_HEIGHT)) for y in list(range(0, BOARD_WIDTH))]
         for move in all_moves:
             sum1 += self.game_one.game_move_player1(move)
             sum2 += self.game_two.game_move_player2(move)

@@ -1,232 +1,276 @@
+"""
+Contains all methods related to GUI.
+Author: Emilija Zdilar 03-05-2018
+"""
+from typing import Any, Tuple, List
+
 from constants import *
 
-def get_field_at_pixel(x, y, left_right_board):
+
+def get_field_at_pixel(x: int, y: int, left_right_board: str) -> Tuple[Any, Any]:
     """
-    :param x: koordinata
-    :param y: koordinata
-    :param left_right_board: lijeva/desna ploca
-    konvertuje koorinatu piksela u koordinatu polja kojem pripada, ako
-    takvo polje postoji
-    :return:
+    Method that converts pixel coordinate to board field coordinate, if such field exists.
+    Args:
+        x: x coordinate
+        y: y coordinate
+        left_right_board: board one or two
+
+    Returns: returns fields coordinates if used click on a field on the screen,
+             empty coordinates otherwise.
+
     """
-    for fieldx in range(BOARDWIDTH):
-        for fieldy in range(BOARDHEIGHT):
-            left, top = left_top_field_coordinate(fieldx, fieldy, left_right_board)
-            box_rect = pygame.Rect(left, top, FIELDSIZE, FIELDSIZE)
+
+    for field_x in range(BOARD_WIDTH):
+        for field_y in range(BOARD_HEIGHT):
+            left, top = left_top_field_coordinate(field_x, field_y, left_right_board)
+            box_rect = pygame.Rect(left, top, FIELD_SIZE, FIELD_SIZE)
             if box_rect.collidepoint(x, y):
-                return (fieldx, fieldy)
+                return field_x, field_y
     return None, None
 
 
-def left_top_field_coordinate(fieldx, fieldy,left_right_board):
+def left_top_field_coordinate(field_x: int, field_y: int, left_right_board: str) -> Tuple[int, int]:
     """
-    pomocna funkcija za iscrtavanje ploce. Nalazi gornji lijevi cosak polja
-    :param fieldx:
-    :param fieldy:
-    :param left_right_board:
-    :return:
+    Helper method for drawing board
+    Args:
+        field_x: x coordinate
+        field_y: y coordinate
+        left_right_board: specified board
+
+    Returns: top left field coordinates
+
     """
     if left_right_board == 'left':
-        left = fieldx * (FIELDSIZE + SPACESIZE) + 50
-        top = fieldy * (FIELDSIZE + SPACESIZE) + YMARGIN + 80
+        left = field_x * (FIELD_SIZE + SPACE_SIZE) + 50
+        top = field_y * (FIELD_SIZE + SPACE_SIZE) + Y_MARGIN + 80
         return left, top
     if left_right_board == 'right':
-        left = WINDOWWIDTH - fieldx * (FIELDSIZE + SPACESIZE) - 100
-        top = fieldy * (FIELDSIZE + SPACESIZE) + YMARGIN + 80
+        left = WINDOW_WIDTH - field_x * (FIELD_SIZE + SPACE_SIZE) - 100
+        top = field_y * (FIELD_SIZE + SPACE_SIZE) + Y_MARGIN + 80
         return left, top
 
 
-def draw_board(board, left_right):
+def draw_board(board: List[List[List[bool]]], left_right: str) -> None:
     """
-    iscrtava lijevu ili desnu plocu za datu konfiguraciju.
-    :param board: Trodimenzionalni niz polja (matrica cije svako polje sadrzi niz informacija)
-    :param left_right: lijeva ili desna ploca
-    :return:
+    Method that draws one of the specified boards, for a given configuration.
+    Args:
+        board:
+        left_right:
+
+    Returns:
+
     """
-    for fieldx in range(BOARDWIDTH):
-        for fieldy in range(BOARDHEIGHT):
-            left, top = left_top_field_coordinate(fieldx, fieldy, left_right)
-            if board[fieldx][fieldy][0] is not REVEALED:
-                pygame.draw.rect(DISPLAYSURF, UNREVEALEDFIELDCOLOR, (left, top, FIELDSIZE, FIELDSIZE))
-            elif board[fieldx][fieldy][0] is REVEALED and board[fieldx][fieldy][1] is not HASSHIP:
-                pygame.draw.rect(DISPLAYSURF, EMPTYFIELDCOLOR, (left, top, FIELDSIZE, FIELDSIZE))
-            elif board[fieldx][fieldy][0] is REVEALED and board[fieldx][fieldy][1] is HASSHIP:
-                pygame.draw.rect(DISPLAYSURF, SHIPFIELDCOLOR, (left, top, FIELDSIZE, FIELDSIZE))
+    for field_x in range(BOARD_WIDTH):
+        for field_y in range(BOARD_HEIGHT):
+            left, top = left_top_field_coordinate(field_x, field_y, left_right)
+            if board[field_x][field_y][0] is not REVEALED:
+                pygame.draw.rect(DISPLAY_SURF, UNREVEALED_FIELD_COLOR, (left, top, FIELD_SIZE, FIELD_SIZE))
+            elif board[field_x][field_y][0] is REVEALED and board[field_x][field_y][1] is not HAS_SHIP:
+                pygame.draw.rect(DISPLAY_SURF, EMPTY_FIELD_COLOR, (left, top, FIELD_SIZE, FIELD_SIZE))
+            elif board[field_x][field_y][0] is REVEALED and board[field_x][field_y][1] is HAS_SHIP:
+                pygame.draw.rect(DISPLAY_SURF, SHIP_FIELD_COLOR, (left, top, FIELD_SIZE, FIELD_SIZE))
 
 
-def draw_header():
+def draw_header() -> None:
     """
-    Crta logo i Naziv Battlesip
-    :return:
+    Helper method that draws Battleship sign and Logo
+    Returns: None
+
     """
     font_obj = pygame.font.SysFont('Courier New', 32)
     text_surface_obj = font_obj.render('BattleShip', True, GREY, NAVY)
     text_rect_obj = text_surface_obj.get_rect()
     text_rect_obj.center = (100, 30)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
     ship_img =\
         pygame.image.load('.\img\ship.png')
-    shipx = 130
-    shipy = 10
-    DISPLAYSURF.blit(ship_img, (shipx, shipy))
+    ship_x = 130
+    ship_y = 10
+    DISPLAY_SURF.blit(ship_img, (ship_x, ship_y))
 
 
-def has_won(player_one_or_two):
+def has_won(player_one_or_two: str) -> None:
     """
-    Ispisuje ko je pobjedio
-    :param player_one_or_two:
-    :return:
-    """
-    font_obj = pygame.font.SysFont('Courier New', 20)
-    text_surface_obj = font_obj.render('Pobjeda!', True, GREY, NAVY)
-    text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (300, 140) if player_one_or_two == 'Player One' else (900,140)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    Method that displays the winner
+    Args:
+        player_one_or_two: Player that won
 
+    Returns:
 
-def draw_match_no(match_no, no_of_games):
-    """
-    Ispisuje redni broj partije za mečeve od više partija
-    :param match_no: trenutna igra
-    :param no_of_games: ukupan broj igara
-    :return:
     """
     font_obj = pygame.font.SysFont('Courier New', 20)
-    text_surface_obj = font_obj.render(str(match_no) + ' / ' + str(no_of_games) , True, GREY, NAVY)
+    text_surface_obj = font_obj.render(YOU_WON, True, GREY, NAVY)
     text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (580, 50)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    text_rect_obj.center = (300, 140) if player_one_or_two == 'Player One' else (920, 140)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
 
-def draw_score(score):
+def draw_match_no(match_no: int, no_of_games: int) -> None:
     """
-    Ipisuje rezultat za meć od više partija
-    :param score: oblika (broj_bodova_1, broj_bodova2)
-    :return:
+    Method that draws current match number for multi-match
+    games.
+    Args:
+        match_no:
+        no_of_games:
+
+    Returns:
+
     """
+
+    font_obj = pygame.font.SysFont('Courier New', 20)
+    text_surface_obj = font_obj.render(str(match_no) + ' / ' + str(no_of_games), True, GREY, NAVY)
+    text_rect_obj = text_surface_obj.get_rect()
+    text_rect_obj.center = (620, 50)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
+
+
+def draw_score(score: List[int]) -> None:
+    """
+    Method that draws the score for multiple-match games.
+    Args:
+        score: first players score, second players score
+
+    Returns: None
+
+    """
+
     font_obj = pygame.font.SysFont('Courier New', 20)
     text_surface_obj = font_obj.render(str(score[0]) + ' : ' + str(score[1]), True, GREY, NAVY)
     text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (580, 80)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    text_rect_obj.center = (620, 80)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
 
-def draw_count_moves(moves_player_one, moves_player_two, player_one, player_two):
+def draw_count_moves(moves_player_one: int, moves_player_two: int, player_one: str, player_two: str) -> None:
     """
-    Ispisuje broj poteza, za svakog od AI, kako bi se uporedila brzina
-    :param moves_player_one: broj poteza prvog igraca
-    :param moves_player_two: broj poteza drugog igraca
-    :param player_one: Ime igraca ili Strategije
-    :param player_two: Ime igraca ili Strategije
-    :return:
+    Method that draws number of moves for both AI playes, for speed comparison.
+    Args:
+        moves_player_one:
+        moves_player_two:
+        player_one:
+        player_two:
+
+    Returns:
+
     """
+
     font_obj = pygame.font.SysFont('Courier New', 20)
     text_surface_obj = font_obj.render(player_one, True, GREY, NAVY)
     text_rect_obj = text_surface_obj.get_rect()
     text_rect_obj.center = (300, 100)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
-    text_surface_obj = font_obj.render('Broj poteza:' + str(moves_player_one), True, GREY, NAVY)
+    text_surface_obj = font_obj.render(NO_OF_MOVES + str(moves_player_one), True, GREY, NAVY)
     text_rect_obj.center = (300, 120)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
     text_surface_obj = font_obj.render(player_two, True, GREY, NAVY)
     text_rect_obj.center = (900, 100)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
-    text_surface_obj = font_obj.render('Broj poteza:' + str(moves_player_two), True, GREY, NAVY)
+    text_surface_obj = font_obj.render(NO_OF_MOVES + str(moves_player_two), True, GREY, NAVY)
     text_rect_obj.center = (900, 120)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
 
-def draw_names(player_one, player_two):
+def draw_names(player_one: str, player_two: str) -> None:
     """
-    Ispisuje imena igrača iznad respektivnih ploča
-    :param player_one:
-    :param player_two:
-    :return:
+    Draws player names above their respective boards
+    Args:
+        player_one: AI
+        player_two: AI or Human
+
+    Returns: None
+
     """
+
     font_obj = pygame.font.SysFont('Courier New', 28)
     text_surface_obj = font_obj.render(player_one, True, GREY, NAVY)
     text_rect_obj = text_surface_obj.get_rect()
     text_rect_obj.center = (300, 100)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
     text_surface_obj = font_obj.render(player_two, True, GREY, NAVY)
     text_rect_obj.center = (900, 100)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
 
-def draw_menu_buttons(on_mouse_over, button_ai_vs_ai, button_ai_vs_player):
+def draw_menu_buttons(on_mouse_over: str, button_ai_vs_ai, button_ai_vs_player) -> None:
     """
-    Crta glavni izbornik s dva dugmeta koja mjenjaju boju on hover
-    :param on_mouse_over: kad pređe mišem preko dugmeta
-    :param button_ai_vs_ai: Mode AI protiv AI
-    :param button_ai_vs_player: Mode Human protiv AI
-    :return:
+    Method that Draws Main Menu with two buttons, that change color on hover.
+    Player gets to pick game mode.
+    Args:
+        on_mouse_over:
+        button_ai_vs_ai: Mode AI vs AI
+        button_ai_vs_player: Mode Human vs AI
+
+    Returns:
+
     """
+
     font_obj = pygame.font.SysFont('Courier New', 20)
 
     if on_mouse_over == 'AIvsPlayer':
-        pygame.draw.rect(DISPLAYSURF, [100, 100, 100], button_ai_vs_ai)
-        pygame.draw.rect(DISPLAYSURF, [200, 200, 200], button_ai_vs_player)
-        text_surface_obj = font_obj.render('AI vs Player', True, (50, 50, 50), (200, 200, 200))
+        pygame.draw.rect(DISPLAY_SURF, [100, 100, 100], button_ai_vs_ai)
+        pygame.draw.rect(DISPLAY_SURF, [200, 200, 200], button_ai_vs_player)
+        text_surface_obj = font_obj.render(AI_VS_PLAYER, True, (50, 50, 50), (200, 200, 200))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 + 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
-        text_surface_obj = font_obj.render('AI vs AI', True, (50, 50, 50), (100, 100, 100))
+        text_rect_obj.center = (WINDOW_WIDTH / 2 + 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
+        text_surface_obj = font_obj.render(AI_VS_AI, True, (50, 50, 50), (100, 100, 100))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 - 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+        text_rect_obj.center = (WINDOW_WIDTH / 2 - 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
     elif on_mouse_over == 'AIvsAI':
-        pygame.draw.rect(DISPLAYSURF, [200, 200, 200], button_ai_vs_ai)
-        pygame.draw.rect(DISPLAYSURF, [100, 100, 100], button_ai_vs_player)
-        text_surface_obj = font_obj.render('AI vs AI', True, (50, 50, 50), (200, 200, 200))
+        pygame.draw.rect(DISPLAY_SURF, [200, 200, 200], button_ai_vs_ai)
+        pygame.draw.rect(DISPLAY_SURF, [100, 100, 100], button_ai_vs_player)
+        text_surface_obj = font_obj.render(AI_VS_AI, True, (50, 50, 50), (200, 200, 200))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 - 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
-        text_surface_obj = font_obj.render('AI vs Player', True, (50, 50, 50), (100, 100, 100))
+        text_rect_obj.center = (WINDOW_WIDTH / 2 - 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
+        text_surface_obj = font_obj.render(AI_VS_PLAYER, True, (50, 50, 50), (100, 100, 100))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 + 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+        text_rect_obj.center = (WINDOW_WIDTH / 2 + 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
     elif on_mouse_over == 'Neither':
-        pygame.draw.rect(DISPLAYSURF, [100, 100, 100], button_ai_vs_ai)
-        pygame.draw.rect(DISPLAYSURF, [100, 100, 100], button_ai_vs_player)
-        text_surface_obj = font_obj.render('AI vs AI', True, (50, 50, 50), (100, 100, 100))
+        pygame.draw.rect(DISPLAY_SURF, [100, 100, 100], button_ai_vs_ai)
+        pygame.draw.rect(DISPLAY_SURF, [100, 100, 100], button_ai_vs_player)
+        text_surface_obj = font_obj.render(AI_VS_AI, True, (50, 50, 50), (100, 100, 100))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 - 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
-        text_surface_obj = font_obj.render('AI vs Player', True, (50, 50, 50), (100, 100, 100))
+        text_rect_obj.center = (WINDOW_WIDTH / 2 - 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
+        text_surface_obj = font_obj.render(AI_VS_PLAYER, True, (50, 50, 50), (100, 100, 100))
         text_rect_obj = text_surface_obj.get_rect()
-        text_rect_obj.center = (WINDOWWIDTH / 2 + 200, 300)
-        DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+        text_rect_obj.center = (WINDOW_WIDTH / 2 + 200, 300)
+        DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
 
 
-def draw_level_buttons(button_easy, button_medium, button_hard):
+def draw_level_buttons(button_easy, button_medium, button_hard) -> None:
     """
-    Crta Izbornik razina
-    :param button_easy: Easy Razina
-    :param button_medium: Medium Razina
-    :param button_hard: Hard Razina
-    :return:
+    Method that draws Difficulty level Menu.
+    Args:
+        button_easy: easy opponent (Random)
+        button_medium: medium opponent (partial Target/Hunt)
+        button_hard: hard opponent (TargetHunt + Parity)
+
+    Returns: None
+
     """
+
     font_obj = pygame.font.SysFont('Courier New', 20)
-    pygame.draw.rect(DISPLAYSURF, [200, 200, 200], button_easy)
-    pygame.draw.rect(DISPLAYSURF, [200, 200, 200], button_medium)
-    pygame.draw.rect(DISPLAYSURF, [200, 200, 200], button_hard)
+    pygame.draw.rect(DISPLAY_SURF, [200, 200, 200], button_easy)
+    pygame.draw.rect(DISPLAY_SURF, [200, 200, 200], button_medium)
+    pygame.draw.rect(DISPLAY_SURF, [200, 200, 200], button_hard)
     text_surface_obj = font_obj.render('Easy', True, (50, 50, 50), (200, 200, 200))
     text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (WINDOWWIDTH / 2, 225)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    text_rect_obj.center = (WINDOW_WIDTH / 2, 225)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
     text_surface_obj = font_obj.render('Medium', True, (50, 50, 50), (200, 200, 200))
     text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (WINDOWWIDTH / 2, 325)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
+    text_rect_obj.center = (WINDOW_WIDTH / 2, 325)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)
     text_surface_obj = font_obj.render('Hard', True, (50, 50, 50), (200, 200, 200))
     text_rect_obj = text_surface_obj.get_rect()
-    text_rect_obj.center = (WINDOWWIDTH / 2, 425)
-    DISPLAYSURF.blit(text_surface_obj, text_rect_obj)
-
-
-
+    text_rect_obj.center = (WINDOW_WIDTH / 2, 425)
+    DISPLAY_SURF.blit(text_surface_obj, text_rect_obj)

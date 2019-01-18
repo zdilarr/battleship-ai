@@ -16,8 +16,8 @@ class BattleshipGame (object):
 
     def __init__(self, player1_, player2_):
 
-        self.board_player1 = [[[not REVEALED, not HASSHIP] for _ in range(BOARDHEIGHT)] for _ in range(BOARDWIDTH)]
-        self.board_player2 = [[[not REVEALED, not HASSHIP] for _ in range(BOARDHEIGHT)] for _ in range(BOARDWIDTH)]
+        self.board_player1 = [[[not REVEALED, not HAS_SHIP] for _ in range(BOARD_HEIGHT)] for _ in range(BOARD_WIDTH)]
+        self.board_player2 = [[[not REVEALED, not HAS_SHIP] for _ in range(BOARD_HEIGHT)] for _ in range(BOARD_WIDTH)]
         self.player1 = player1_
         self.player2 = player2_
         self.player1_hit_counter = 0
@@ -27,8 +27,8 @@ class BattleshipGame (object):
         self.player1_moves_order = []
         self.player2_moves_order = []
         self.winner = -1
-        self.player1_moves_order = smart_ai_moves_order() if self.player1 == HARDAI else not_so_smart_ai_moves_order()
-        self.player2_moves_order = smart_ai_moves_order() if self.player2 == HARDAI else not_so_smart_ai_moves_order()
+        self.player1_moves_order = smart_ai_moves_order() if self.player1 == HARD_AI else not_so_smart_ai_moves_order()
+        self.player2_moves_order = smart_ai_moves_order() if self.player2 == HARD_AI else not_so_smart_ai_moves_order()
 
     def __str__(self):
         return str(self.board_player1)
@@ -39,7 +39,7 @@ class BattleshipGame (object):
         Returns: None
 
         """
-        for ship in ALLSHIPS:
+        for ship in ALL_SHIPS:
             self.place_a_ship(ship, self.board_player1)
             self.place_a_ship(ship, self.board_player2)
 
@@ -58,22 +58,22 @@ class BattleshipGame (object):
         orientation = random.choice(ship_orientation)
 
         if orientation == 'Horizontal':
-            chosen_position = (random.randrange(0, BOARDHEIGHT - 1), random.randrange(0, BOARDWIDTH - ship[1] - 1))
+            chosen_position = (random.randrange(0, BOARD_HEIGHT - 1), random.randrange(0, BOARD_WIDTH - ship[1] - 1))
             for i in range(0, ship[1]):
-                if board[chosen_position[0]][chosen_position[1] + i][1] == HASSHIP:
+                if board[chosen_position[0]][chosen_position[1] + i][1] == HAS_SHIP:
                     self.place_a_ship(ship, board)
                     return
             for i in range(0, ship[1]):
-                board[chosen_position[0]][chosen_position[1] + i] = [not REVEALED, HASSHIP]
+                board[chosen_position[0]][chosen_position[1] + i] = [not REVEALED, HAS_SHIP]
 
         if orientation == 'Vertical':
-            chosen_position = (random.randrange(0, BOARDHEIGHT - ship[1] - 1), random.randrange(0, BOARDWIDTH - 1))
+            chosen_position = (random.randrange(0, BOARD_HEIGHT - ship[1] - 1), random.randrange(0, BOARD_WIDTH - 1))
             for i in range(0, ship[1]):
-                if board[chosen_position[0] + i][chosen_position[1]][1] == HASSHIP:
+                if board[chosen_position[0] + i][chosen_position[1]][1] == HAS_SHIP:
                     self.place_a_ship(ship, board)
                     return
             for i in range(0, ship[1]):
-                board[chosen_position[0] + i][chosen_position[1]] = [not REVEALED, HASSHIP]
+                board[chosen_position[0] + i][chosen_position[1]] = [not REVEALED, HAS_SHIP]
 
     def game_move_player1(self, field) -> Union[bool, None]:
         """
@@ -95,7 +95,7 @@ class BattleshipGame (object):
 
         if self.board_player1[x][y][0] != REVEALED:
             self.board_player1[x][y][0] = REVEALED
-            if self.board_player1[x][y][1] is HASSHIP:
+            if self.board_player1[x][y][1] is HAS_SHIP:
                 self.player1_hit_counter += 1
                 return True
             return False
@@ -120,7 +120,7 @@ class BattleshipGame (object):
         if self.board_player2[x][y][0] != REVEALED:
             self.board_player2[x][y][0] = REVEALED
 
-            if self.board_player2[x][y][1] is HASSHIP:
+            if self.board_player2[x][y][1] is HAS_SHIP:
                 self.player2_hit_counter += 1
                 return True
             return False

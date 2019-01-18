@@ -1,29 +1,34 @@
-from pygame.locals import *
-from constants import *
-from drawings import *
+"""
+Contains methods for battleship game match.
+Author: Emilija Zdilar 06-05-2018
+"""
 import time
+from pygame.locals import *
 from battleship_game import *
+from drawings import *
 
 
-def main_menu():
+def main_menu() -> Union[bool, None]:
     """
-    Glavni izbornik
-    :return:
+    Method that initializes the game and handles quiting game, Mode and Level choices
+    Returns:
+
     """
+
     pygame.init()
-    pygame.display.set_caption('BattleShip')
-    button_ai_vs_ai = pygame.Rect(WINDOWWIDTH/2 - 300, 200, 200, 200)
-    button_ai_vs_player = pygame.Rect(WINDOWWIDTH/2 + 100, 200, 200, 200)
+    pygame.display.set_caption(BATTLESHIP_CAPTION)
+    button_ai_vs_ai = pygame.Rect(WINDOW_WIDTH / 2 - 300, 200, 200, 200)
+    button_ai_vs_player = pygame.Rect(WINDOW_WIDTH / 2 + 100, 200, 200, 200)
 
-    DISPLAYSURF.fill(NAVY)
+    DISPLAY_SURF.fill(NAVY)
     draw_header()
 
     while True:
-        s = pygame.Surface((WINDOWWIDTH, WINDOWHEIGHT-150))
+        s = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT - 150))
         pygame.time.delay(20)
         s.set_alpha(8)
         s.fill(NAVY)
-        DISPLAYSURF.blit(s, (0, 150))
+        DISPLAY_SURF.blit(s, (0, 150))
 
         if button_ai_vs_player.collidepoint(pygame.mouse.get_pos()):
             draw_menu_buttons('AIvsPlayer', button_ai_vs_ai, button_ai_vs_player)
@@ -38,16 +43,16 @@ def main_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if button_ai_vs_ai.collidepoint(mouse_pos):
-                    DISPLAYSURF.fill(NAVY)
+                    DISPLAY_SURF.fill(NAVY)
                     draw_header()
                     time.sleep(0.5)
                     no_of_games = 5
                     score = [0, 0]
-                    for i in range(1, no_of_games+1):
+                    for i in range(1, no_of_games + 1):
                         draw_match_no(i, no_of_games)
                         result = game_ai_vs_ai()
                         if result == False:
-                            DISPLAYSURF.fill(NAVY)
+                            DISPLAY_SURF.fill(NAVY)
                             draw_header()
                             break
                         score[result - 1] += 1
@@ -56,29 +61,30 @@ def main_menu():
 
                 if button_ai_vs_player.collidepoint(mouse_pos):
                     level = level_choice()
-                    DISPLAYSURF.fill(NAVY)
+                    DISPLAY_SURF.fill(NAVY)
                     draw_header()
                     if level == False:
                         break
                     result = game_ai_vs_human(level)
                     if result == False:
-                        DISPLAYSURF.fill(NAVY)
+                        DISPLAY_SURF.fill(NAVY)
                         draw_header()
                         break
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        FPS_CLOCK.tick(FPS)
 
 
-def level_choice():
+def level_choice() -> Union[bool, str]:
     """
-    Izbor razine Easy / Medium / Hard
-    :return: Tag izabrane razine
+    Method that handles the difficulty level choice.
+    Returns: Chosen difficulty level or False in case of quitting the game.
+
     """
-    DISPLAYSURF.fill(NAVY)
+    DISPLAY_SURF.fill(NAVY)
     draw_header()
-    button_easy = pygame.Rect(WINDOWWIDTH/2-100, 200, 200, 50)
-    button_medium = pygame.Rect(WINDOWWIDTH/2-100, 300, 200, 50)
-    button_hard = pygame.Rect(WINDOWWIDTH/2-100, 400, 200, 50)
+    button_easy = pygame.Rect(WINDOW_WIDTH / 2 - 100, 200, 200, 50)
+    button_medium = pygame.Rect(WINDOW_WIDTH / 2 - 100, 300, 200, 50)
+    button_hard = pygame.Rect(WINDOW_WIDTH / 2 - 100, 400, 200, 50)
 
     draw_level_buttons(button_easy, button_medium, button_hard)
     while True:
@@ -89,36 +95,40 @@ def level_choice():
                 mouse_pos = event.pos
 
                 if button_easy.collidepoint(mouse_pos):
-                    DISPLAYSURF.fill(NAVY)
+                    DISPLAY_SURF.fill(NAVY)
                     draw_header()
-                    return 'Easy'
+                    return EASY_DIFFICULTY
 
                 if button_medium.collidepoint(mouse_pos):
-                    DISPLAYSURF.fill(NAVY)
+                    DISPLAY_SURF.fill(NAVY)
                     draw_header()
-                    return 'Medium'
+                    return MEDIUM_DIFFICULTY
 
                 if button_hard.collidepoint(mouse_pos):
-                    DISPLAYSURF.fill(NAVY)
+                    DISPLAY_SURF.fill(NAVY)
                     draw_header()
-                    return 'Hard'
+                    return HARD_DIFFICULTY
 
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        FPS_CLOCK.tick(FPS)
 
-def game_ai_vs_human(level):
+
+def game_ai_vs_human(level: str) -> bool:
     """
-    AI protiv Igraca
-    :param level: Razina o kojoj ovisi strategija AI
-    :return:
+    Method that handles ai versus human game mode.
+    Args:
+        level: string that represents difficulty level - Easy, Medium, Hard
+
+    Returns:
     """
 
-    current_battleship_game = BattleshipGame(HARDAI, HUMAN)
+    current_battleship_game = BattleshipGame(HARD_AI, HUMAN)
     current_battleship_game.prepare_boards()
     current_move = 0
-    potez = 'human'
+    move_ = HUMAN_MOVE
 
-    while current_battleship_game.player1_hit_counter < 17 and current_battleship_game.player2_hit_counter < 17:
+    while current_battleship_game.player1_hit_counter < MAX_NO_OF_HITS and \
+            current_battleship_game.player2_hit_counter < MAX_NO_OF_HITS:
         draw_board(current_battleship_game.board_player2, 'right')
         draw_board(current_battleship_game.board_player1, 'left')
 
@@ -126,53 +136,55 @@ def game_ai_vs_human(level):
             if event.type == pygame.QUIT:
                 return False
 
-            if event.type == MOUSEBUTTONDOWN and potez == 'human':
+            if event.type == MOUSEBUTTONDOWN and move_ == HUMAN_MOVE:
                 field = get_field_at_pixel(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], 'right')
                 if field != (None, None) and current_battleship_game.board_player2[field[0]][field[1]][0] != REVEALED:
                     if current_battleship_game.game_move_player2(field) != True:
                         pygame.display.update()
-                        FPSCLOCK.tick(FPS)
-                        potez = 'ai'
+                        FPS_CLOCK.tick(FPS)
+                        move_ = AI_MOVE
 
-        if current_battleship_game.player2_hit_counter == 17:
+        if current_battleship_game.player2_hit_counter == MAX_NO_OF_HITS:
             draw_board(current_battleship_game.board_player1, 'left')
             draw_board(current_battleship_game.board_player2, 'right')
             has_won('Player Two')
 
-        while potez == 'ai':
-            if current_battleship_game.player1_hit_counter == 17:
+        while move_ == AI_MOVE:
+            if current_battleship_game.player1_hit_counter == MAX_NO_OF_HITS:
                 draw_board(current_battleship_game.board_player1, 'left')
                 draw_board(current_battleship_game.board_player2, 'right')
                 has_won('Player One')
-            if level == 'Hard':
+            if level == HARD_DIFFICULTY:
                 if current_battleship_game.hard_ai_strategy(current_move) != True:
-                    potez = 'human'
-            elif level == 'Easy':
+                    move_ = HUMAN_MOVE
+            elif level == EASY_DIFFICULTY:
                 if current_battleship_game.easy_ai_strategy(current_move) != True:
-                    potez = 'human'
-            elif level == 'Medium':
+                    move_ = HUMAN_MOVE
+            elif level == MEDIUM_DIFFICULTY:
                 if current_battleship_game.medium_ai_strategy(current_move) != True:
-                    potez = 'human'
+                    move_ = HUMAN_MOVE
 
             current_move += 1
 
         draw_names('Ai', 'Human')
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        FPS_CLOCK.tick(FPS)
     return True
 
 
-def game_ai_vs_ai():
+def game_ai_vs_ai() -> Union[bool, int]:
     """
-    Meč između 2 AI-a s različitim strategijama
-    :return:
+    Match between two AI using different strategies.
+    Returns: False in case of quitting the game, and 1 or 2 depending on the winner
+
     """
-    current_battleship_game = BattleshipGame(HARDAI, RANDOMAI)
+    current_battleship_game = BattleshipGame(HARD_AI, RANDOM_AI)
     current_battleship_game.prepare_boards()
     current_move = 0
     current_move2 = 0
 
-    while current_battleship_game.player1_hit_counter < 17 or current_battleship_game.player2_hit_counter < 17:
+    while current_battleship_game.player1_hit_counter < MAX_NO_OF_HITS or \
+            current_battleship_game.player2_hit_counter < MAX_NO_OF_HITS:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -181,13 +193,13 @@ def game_ai_vs_ai():
         draw_board(current_battleship_game.board_player1, 'left')
         current_battleship_game.random_ai_strategy(current_move2)
         draw_board(current_battleship_game.board_player2, 'right')
-        if current_battleship_game.player1_hit_counter < 17:
+        if current_battleship_game.player1_hit_counter < MAX_NO_OF_HITS:
             current_move += 1
-        if current_battleship_game.player2_hit_counter < 17:
+        if current_battleship_game.player2_hit_counter < MAX_NO_OF_HITS:
             current_move2 += 1
-        draw_count_moves(current_move, current_move2, 'Target/Hunt+Parity Strategija', 'Nasumicni potezi')
+        draw_count_moves(current_move, current_move2, ADVANCED_STRATEGY, NAIVE_STRATEGY)
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        FPS_CLOCK.tick(FPS)
     if current_move <= current_move2:
         current_battleship_game.winner = 0
         return 1

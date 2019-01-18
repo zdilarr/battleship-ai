@@ -30,8 +30,8 @@ def smart_ai_moves_order() -> List[Tuple[int, int]]:
 
     """
 
-    rows = list(range(0, BOARDHEIGHT))
-    columns = list(range(0, BOARDWIDTH))
+    rows = list(range(0, BOARD_HEIGHT))
+    columns = list(range(0, BOARD_WIDTH))
     random.shuffle(columns)
     random.shuffle(rows)
     moves_order = [(x, y) for x in rows for y in columns]
@@ -47,8 +47,8 @@ def not_so_smart_ai_moves_order() -> List[Tuple[int, int]]:
     Returns: new moves order
 
     """
-    rows = list(range(0, BOARDHEIGHT))
-    columns = list(range(0, BOARDWIDTH))
+    rows = list(range(0, BOARD_HEIGHT))
+    columns = list(range(0, BOARD_WIDTH))
     random.shuffle(columns)
     random.shuffle(rows)
     moves_order = [(x, y) for x in rows for y in columns]
