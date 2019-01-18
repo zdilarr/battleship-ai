@@ -7,17 +7,17 @@
 
 	This project is an Artificial Intelligence course assignment. 
 	It is a 3-level Battleship game, written in Python. 
-	The game has two modes: Player vs AI and AI vs Random guessing.
+	The game has two modes: Player vs AI and AI vs AI.
 	 		
 **********************************************************************
 
 Getting Started:
 
-- Download/extract project 
-- Navigate to Battleship_Zdilar_Emilija
-- python main.py 
-- For tests, navigate to Battleship_Zdilar_Emilija/tests (unittests)
-
+- Download and open project
+- Create and activate virtual environment, as per your preference.
+- pip install -r requirements.txt
+- Navigate to project root folder
+- python main.py
 **********************************************************************
 
 Tips:
@@ -31,7 +31,7 @@ Tips:
 
 Prerequisites:
 - Python 3.6.5
-- Pygame 1.9.3
+- Pygame 1.9.4
 
 **********************************************************************
 

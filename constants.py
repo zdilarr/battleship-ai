@@ -9,7 +9,7 @@ import os
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (30, 30)
 
 # Frames per second (speed)
-FPS = 30
+FPS = 20
 FPS_CLOCK = pygame.time.Clock()
 
 # Window size
