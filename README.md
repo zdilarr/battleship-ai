@@ -29,7 +29,7 @@ Tips:
  
  Example: 
   
-![Alt text](example.jpg?raw=true "Example" =100x200)
+![Alt text](example.jpg?raw=true "Example" | width = 200)
 **********************************************************************
 
 Prerequisites:
