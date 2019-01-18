@@ -16,8 +16,8 @@ class TestBattleshipGame (unittest.TestCase):
         pass
 
     def setUp(self):
-        self.game_one = battleship_game(HARDAI,HUMAN)
-        self.game_two = battleship_game(HARDAI,RANDOMAI)
+        self.game_one = BattleshipGame(HARDAI, HUMAN)
+        self.game_two = BattleshipGame(HARDAI, RANDOMAI)
         self.game_one.prepare_boards()
         self.game_two.prepare_boards()
 

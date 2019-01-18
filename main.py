@@ -113,7 +113,7 @@ def game_ai_vs_human(level):
     :return:
     """
 
-    current_battleship_game = battleship_game(HARDAI, HUMAN)
+    current_battleship_game = BattleshipGame(HARDAI, HUMAN)
     current_battleship_game.prepare_boards()
     current_move = 0
     potez = 'human'
@@ -167,7 +167,7 @@ def game_ai_vs_ai():
     Meč između 2 AI-a s različitim strategijama
     :return:
     """
-    current_battleship_game = battleship_game(HARDAI, RANDOMAI)
+    current_battleship_game = BattleshipGame(HARDAI, RANDOMAI)
     current_battleship_game.prepare_boards()
     current_move = 0
     current_move2 = 0
